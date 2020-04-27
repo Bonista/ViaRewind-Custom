@@ -4,6 +4,7 @@ import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.Protocol1_7_6_10TO
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.entityreplacements.ArmorStandReplacement;
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.entityreplacements.EndermiteReplacement;
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.entityreplacements.GuardianReplacement;
+import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.entityreplacements.RabbitReplacement;
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.items.ReplacementRegistry1_7_6_10to1_8;
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.metadata.MetadataRewriter;
 import de.gerrygames.viarewind.protocol.protocol1_7_6_10to1_8.storage.EntityTracker;
@@ -260,7 +261,19 @@ public class SpawnPackets {
 							endermite.setYawPitch(yaw * 360f / 256, pitch * 360f / 256);
 							endermite.setHeadYaw(headYaw * 360f / 256);
 							tracker.addEntityReplacement(endermite);
-						} else if (typeId == 101 || typeId == 30 || typeId == 255 || typeId == -1) {
+
+							System.out.println("ENDERMITE");
+						} else if (typeId == 101){
+							packetWrapper.cancel();
+
+							EntityTracker tracker = packetWrapper.user().get(EntityTracker.class);
+							RabbitReplacement rabbit = new RabbitReplacement(entityId, packetWrapper.user());
+							rabbit.setLocation(x / 32.0, y / 32.0, z / 32.0);
+							rabbit.setYawPitch(yaw * 360f / 256, pitch * 360f / 256);
+							rabbit.setHeadYaw(headYaw * 360f / 256);
+							tracker.addEntityReplacement(rabbit);
+							System.out.println("WABBIT");
+						} else if (typeId == 30 || typeId == 255 || typeId == -1) {
 							packetWrapper.cancel();
 						}
 					}

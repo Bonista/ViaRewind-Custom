@@ -30,6 +30,7 @@ public class Protocol1_7_0_5to1_7_6_10 extends Protocol {
 				map(Type.STRING);
 			}
 		});
+		
 
 		//Spawn Player
 		this.registerOutgoing(State.PLAY, 0x0C, 0x0C, new PacketRemapper() {
