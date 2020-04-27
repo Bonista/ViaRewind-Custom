@@ -205,29 +205,28 @@ public class WorldPackets {
 				map(Type.FLOAT);
 				map(Type.FLOAT);
 				map(Type.INT);
+
 				handler(new PacketHandler() {
 					@Override
 					public void handle(PacketWrapper packetWrapper) throws Exception {
 						String name = packetWrapper.get(Type.STRING, 0);
 						Particle particle = Particle.find(name);
-
 						if (particle == Particle.ICON_CRACK || particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST) {
-							int id = packetWrapper.read(Type.VAR_INT);
-							int data = particle == Particle.ICON_CRACK ? packetWrapper.read(Type.VAR_INT) : 0;
-							if (id >= 256 && id <= 422 || id >= 2256 && id <= 2267) {  //item
-								particle = Particle.ICON_CRACK;
-							} else if (id >= 0 && id <= 164 || id >= 170 && id <= 175) {
-								if (particle == Particle.ICON_CRACK) particle = Particle.BLOCK_CRACK;
-							} else {
-								packetWrapper.cancel();
-								return;
-							}
-							name = particle.name + "_" + id + "_" + data;
-						}
 
+							System.out.println(name);
+
+							int blockId = packetWrapper.read(Type.VAR_INT);
+
+							int meta = particle == Particle.ICON_CRACK ? packetWrapper.read(Type.VAR_INT) : 0;
+
+							BlockState state = ReplacementRegistry1_7_6_10to1_8.replace(new BlockState(blockId, meta));
+
+							name += "_" + state.getId() + "_"+ state.getData();
+						}
 						packetWrapper.set(Type.STRING, 0, name);
 					}
 				});
+
 			}
 		});
 

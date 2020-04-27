@@ -106,7 +106,7 @@ public class RabbitReplacement implements EntityReplacement {
 	public void spawn() {
 		PacketWrapper spawn = new PacketWrapper(0x0F, null, user);
 		spawn.write(Type.VAR_INT, entityId);
-		spawn.write(Type.UNSIGNED_BYTE, (short) 94);
+		spawn.write(Type.UNSIGNED_BYTE, (short) 93);
 		spawn.write(Type.INT, 0);
 		spawn.write(Type.INT, 0);
 		spawn.write(Type.INT, 0);

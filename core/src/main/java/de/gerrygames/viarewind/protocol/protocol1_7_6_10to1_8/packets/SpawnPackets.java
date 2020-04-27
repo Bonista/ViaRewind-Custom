@@ -252,6 +252,8 @@ public class SpawnPackets {
 							guardian.setYawPitch(yaw * 360f / 256, pitch * 360f / 256);
 							guardian.setHeadYaw(headYaw * 360f / 256);
 							tracker.addEntityReplacement(guardian);
+
+
 						} else if (typeId == 67) {
 							packetWrapper.cancel();
 
@@ -262,7 +264,6 @@ public class SpawnPackets {
 							endermite.setHeadYaw(headYaw * 360f / 256);
 							tracker.addEntityReplacement(endermite);
 
-							System.out.println("ENDERMITE");
 						} else if (typeId == 101){
 							packetWrapper.cancel();
 
@@ -272,7 +273,6 @@ public class SpawnPackets {
 							rabbit.setYawPitch(yaw * 360f / 256, pitch * 360f / 256);
 							rabbit.setHeadYaw(headYaw * 360f / 256);
 							tracker.addEntityReplacement(rabbit);
-							System.out.println("WABBIT");
 						} else if (typeId == 30 || typeId == 255 || typeId == -1) {
 							packetWrapper.cancel();
 						}
