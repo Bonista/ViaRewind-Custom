@@ -213,9 +213,16 @@ public class WorldPackets {
 						Particle particle = Particle.find(name);
 						if (particle == Particle.ICON_CRACK || particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST) {
 
-							int blockId = packetWrapper.read(Type.VAR_INT);
-
-							int meta = particle == Particle.ICON_CRACK ? packetWrapper.read(Type.VAR_INT) : 0;
+							int blockId;
+							int meta;
+							if (particle == Particle.ICON_CRACK) {
+								blockId = packetWrapper.read(Type.VAR_INT);
+								meta = 0;
+							} else {
+								int currentBlockId = packetWrapper.read(Type.VAR_INT);
+								blockId = (currentBlockId & 4095);
+								meta = ((currentBlockId >> 12) & 0xF);
+							}
 
 							BlockState state = ReplacementRegistry1_7_6_10to1_8.replace(new BlockState(blockId, meta));
 
