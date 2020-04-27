@@ -213,8 +213,6 @@ public class WorldPackets {
 						Particle particle = Particle.find(name);
 						if (particle == Particle.ICON_CRACK || particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST) {
 
-							System.out.println(name);
-
 							int blockId = packetWrapper.read(Type.VAR_INT);
 
 							int meta = particle == Particle.ICON_CRACK ? packetWrapper.read(Type.VAR_INT) : 0;
