@@ -34,10 +34,11 @@ public class ArmorStandReplacement implements EntityReplacement {
 	private float headYaw;
 	private boolean small = false;
 	private boolean marker = false;
+	private boolean gravity = false;
 	private static int ENTITY_ID = Integer.MAX_VALUE - 16000;
 
 	private enum State {
-		HOLOGRAM, ZOMBIE;
+		HOLOGRAM, ITEM_HOLOGRAM, ZOMBIE;
 	}
 
 	public ArmorStandReplacement(int entityId, UserConnection user) {
@@ -105,9 +106,13 @@ public class ArmorStandReplacement implements EntityReplacement {
 		small = (armorStandFlags & 0x01) != 0;
 		marker = (armorStandFlags & 0x10) != 0;
 
+		gravity = (armorStandFlags & 0x02) == 0;
+
 		State prevState = currentState;
 		if (invisible && name != null) {
 			currentState = State.HOLOGRAM;
+		} else if (invisible && name == null && !gravity) {
+			currentState = State.ITEM_HOLOGRAM;
 		} else {
 			currentState = State.ZOMBIE;
 		}
@@ -170,7 +175,20 @@ public class ArmorStandReplacement implements EntityReplacement {
 			PacketUtil.sendPacket(teleportSkull, Protocol1_7_6_10TO1_8.class, true, true);
 			PacketUtil.sendPacket(teleportHorse, Protocol1_7_6_10TO1_8.class, true, true);
 			PacketUtil.sendPacket(attach, Protocol1_7_6_10TO1_8.class, true, true);
+		} else if (currentState == State.ITEM_HOLOGRAM) {
+
+			PacketWrapper teleportSkull = new PacketWrapper(0x18, null, user);
+			teleportSkull.write(Type.INT, entityIds[0]);
+			teleportSkull.write(Type.INT, (int) (locX * 32.0));
+			teleportSkull.write(Type.INT, (int) ((locY - 0.21) * 32.0));  //Don't ask me where this offset is coming from
+			teleportSkull.write(Type.INT, (int) (locZ * 32.0));
+			teleportSkull.write(Type.BYTE, (byte) 0);
+			teleportSkull.write(Type.BYTE, (byte) 0);
+
+
+			PacketUtil.sendPacket(teleportSkull, Protocol1_7_6_10TO1_8.class, true, true);
 		}
+		// TODO: slime (for interact) (  		WITHER_SKULL_WITH_SLIME = -0.22,  )
 	}
 
 	public void updateMetadata() {
@@ -197,6 +215,12 @@ public class ArmorStandReplacement implements EntityReplacement {
 			metadataList.add(new Metadata(12, MetaType1_7_6_10.Int, -1700000));
 			metadataList.add(new Metadata(10, MetaType1_7_6_10.String, name));
 			metadataList.add(new Metadata(11, MetaType1_7_6_10.Byte, (byte) 1));
+
+			metadataPacket.write(Types1_7_6_10.METADATA_LIST, metadataList);
+		} else if (currentState == State.ITEM_HOLOGRAM) {
+			metadataPacket.write(Type.INT, entityIds[0]);
+
+			List<Metadata> metadataList = new ArrayList<>();
 
 			metadataPacket.write(Types1_7_6_10.METADATA_LIST, metadataList);
 		} else {
@@ -258,6 +282,25 @@ public class ArmorStandReplacement implements EntityReplacement {
 
 			PacketUtil.sendPacket(spawnSkull, Protocol1_7_6_10TO1_8.class, true, true);
 			PacketUtil.sendPacket(spawnHorse, Protocol1_7_6_10TO1_8.class, true, true);
+
+			this.entityIds = entityIds;
+			updateMetadata();
+			updateLocation();
+		} else if (currentState == State.ITEM_HOLOGRAM) {
+			int[] entityIds = new int[] {entityId};
+
+			PacketWrapper spawnSkull = new PacketWrapper(0x0E, null, user);
+			spawnSkull.write(Type.VAR_INT, entityIds[0]);
+			spawnSkull.write(Type.BYTE, (byte) 66);
+			spawnSkull.write(Type.INT, 0);
+			spawnSkull.write(Type.INT, 0);
+			spawnSkull.write(Type.INT, 0);
+			spawnSkull.write(Type.BYTE, (byte) 0);
+			spawnSkull.write(Type.BYTE, (byte) 0);
+			spawnSkull.write(Type.INT, 0);
+
+
+			PacketUtil.sendPacket(spawnSkull, Protocol1_7_6_10TO1_8.class, true, true);
 
 			this.entityIds = entityIds;
 			updateMetadata();
